@@ -1,9 +1,20 @@
 import React from "react";
-import { Card, Input } from "antd";
+import { Button, Card, Input } from "antd";
 import { EyeTwoTone, EyeInvisibleOutlined } from "@ant-design/icons";
 import "./style.css";
+import { signInWithGoogle } from "../../../library";
+import { showMessage } from "../../../library/messages";
 
 const Login = () => {
+  const onLoginWithGoogleClickHandler = () => {
+    console.log("Hello");
+    signInWithGoogle()
+      .then((data) => console.log("Data: ", data))
+      .catch((err) => {
+        showMessage("error", err.message);
+      });
+  };
+
   return (
     <div className="LoginPageContainer">
       <Card
@@ -29,6 +40,13 @@ const Login = () => {
           <h3>or</h3>
           <hr style={{ flex: 0.45 }} />
         </div>
+        <Button
+          type="primary"
+          style={{ width: "100%" }}
+          onClick={onLoginWithGoogleClickHandler}
+        >
+          Login with google
+        </Button>
       </Card>
     </div>
   );

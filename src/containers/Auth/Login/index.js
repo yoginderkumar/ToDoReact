@@ -1,19 +1,54 @@
-import React from "react";
+import React, { useState } from "react";
 import { Button, Card, Input } from "antd";
 import { EyeTwoTone, EyeInvisibleOutlined } from "@ant-design/icons";
 import "./style.css";
-import { signInWithGoogle } from "../../../library";
+import { signInWithEmailPassword, signInWithGoogle } from "../../../library";
 import { showMessage } from "../../../library/messages";
 
 const Login = () => {
-  const onLoginWithGoogleClickHandler = () => {
-    console.log("Hello");
-    signInWithGoogle()
-      .then((data) => console.log("Data: ", data))
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [isSignupEnabled, setIsSignupEnabled] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+
+  const handleErrorFromEmailLogin = (code, message) => {
+    switch (code) {
+      case "auth/user-not-found":
+        setIsSignupEnabled(true);
+        return showMessage("error", "This account does not exist. Create one!");
+      case "auth/wrong-password":
+        return showMessage("error", "Entered incorrect password");
+      default:
+        return showMessage("error", message);
+    }
+  };
+
+  const onLoginClickHandler = async () => {
+    signInWithEmailPassword("abhisheksagar25100@gmail.com", "Abhishek@12")
+      .then((data) => console.log("Data: ", data.user))
       .catch((err) => {
-        showMessage("error", err.message);
+        console.log("Err: ", err.code);
+        handleErrorFromEmailLogin(err.code, err.message);
       });
   };
+
+  const onLoginWithGoogleClickHandler = () => {
+    console.log("Hello");
+    setIsGoogleLoading(true);
+    signInWithGoogle()
+      .then((data) => {
+        console.log("Data: ", data);
+      })
+      .catch((err) => {
+        showMessage("error", err.message);
+      })
+      .finally(() => {
+        setIsGoogleLoading(false);
+      });
+  };
+
+  console.log("Isgoolge loding", isGoogleLoading);
 
   return (
     <div className="LoginPageContainer">
@@ -25,14 +60,42 @@ const Login = () => {
         <h2 className="poppinsBold flex justifyContentCenter">Login...</h2>
         <div className="flex justifyContentCenter">
           <div>
-            <Input type="email" placeholder="Enter email" />
+            <Input
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              type="email"
+              placeholder="Enter email"
+            />
             <Input.Password
-              placeholder="input password"
+              value={password}
+              placeholder="enter password"
               iconRender={(visible) =>
                 visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
               }
+              onChange={(e) => setPassword(e.target.value)}
               className="mt12"
             />
+            {isSignupEnabled && (
+              <Input.Password
+                value={confirmPassword}
+                placeholder="confirm password"
+                iconRender={(visible) =>
+                  visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
+                }
+                className="mt12"
+                onChange={(e) => setConfirmPassword(e.target.value)}
+              />
+            )}
+            <Button
+              type="primary"
+              className="width100 mt12"
+              onClick={onLoginClickHandler}
+              disabled={
+                !email || !password || (isSignupEnabled && !confirmPassword)
+              }
+            >
+              {isSignupEnabled ? "Create an account" : "Login"}
+            </Button>
           </div>
         </div>
         <div className="flex flexRow alignItemsCenter justifyContentCenter mv12">
@@ -42,7 +105,8 @@ const Login = () => {
         </div>
         <Button
           type="primary"
-          style={{ width: "100%" }}
+          className="width100"
+          loading={isGoogleLoading}
           onClick={onLoginWithGoogleClickHandler}
         >
           Login with google

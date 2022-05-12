@@ -1,5 +1,9 @@
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
+import {
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+} from "firebase/auth";
 
 export const firebaseConfig = {
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
@@ -17,5 +21,10 @@ export const auth = firebase.auth();
 const provider = new firebase.auth.GoogleAuthProvider();
 provider.setCustomParameters({ prompt: "select_account" });
 export const signInWithGoogle = () => auth.signInWithPopup(provider);
+
+export const createUserWithEmailPassword = (email, password) =>
+  createUserWithEmailAndPassword(auth, email, password);
+export const signInWithEmailPassword = (email, password) =>
+  signInWithEmailAndPassword(auth, email, password);
 
 export default firebase;

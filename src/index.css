@@ -1,3 +1,8 @@
+/* WIDTH AND HEIGHT */
+.width100 {
+  width: 100%;
+}
+
 /* Margins */
 .m12 {
   margin: 12px;

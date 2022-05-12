@@ -1,3 +1,7 @@
-import { firebaseConfig, signInWithGoogle } from "./firebase";
+import {
+  firebaseConfig,
+  signInWithGoogle,
+  signInWithEmailPassword,
+} from "./firebase";
 
-export { firebaseConfig, signInWithGoogle };
+export { firebaseConfig, signInWithGoogle, signInWithEmailPassword };

@@ -1,3 +1,12 @@
+/* COLORS */
+.errorBg {
+  background-color: #ff0038;
+}
+
+.errorText {
+  color: #ff0038;
+}
+
 /* WIDTH AND HEIGHT */
 .width100 {
   width: 100%;

@@ -2,6 +2,12 @@ import {
   firebaseConfig,
   signInWithGoogle,
   signInWithEmailPassword,
+  createUserWithEmailPassword,
 } from "./firebase";
 
-export { firebaseConfig, signInWithGoogle, signInWithEmailPassword };
+export {
+  firebaseConfig,
+  signInWithGoogle,
+  signInWithEmailPassword,
+  createUserWithEmailPassword,
+};

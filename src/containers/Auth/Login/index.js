@@ -1,22 +1,30 @@
 import React, { useEffect, useState } from "react";
 import { Button, Card, Input } from "antd";
+import { useNavigate } from "react-router-dom";
 import { EyeTwoTone, EyeInvisibleOutlined } from "@ant-design/icons";
 import "./style.css";
 import {
   signInWithEmailPassword,
   createUserWithEmailPassword,
   signInWithGoogle,
+  addUserInDatabase,
 } from "../../../library";
 import { showMessage } from "../../../library/messages";
-import { isEmailValid } from "../../../utils/helperFunctions";
+import {
+  handleErrorFromEmailLogin,
+  isEmailValid,
+} from "../../../utils/helperFunctions";
 
 const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("abhishek@gmail.com");
+  const [password, setPassword] = useState("abhishek");
   const [validationError, setValidationError] = useState({});
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("abhishek");
   const [isSignupEnabled, setIsSignupEnabled] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+  const [isLoadingSigning, setIsLoadingSigning] = useState(false);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (email.length) {
@@ -42,33 +50,37 @@ const Login = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [confirmPassword]);
 
-  const handleErrorFromEmailLogin = (code, message) => {
-    switch (code) {
-      case "auth/user-not-found":
-        setIsSignupEnabled(true);
-        return showMessage("error", "This account does not exist. Create one!");
-      case "auth/wrong-password":
-        return showMessage("error", "Entered incorrect password");
-      default:
-        return showMessage("error", message);
-    }
-  };
-
   const onLoginClickHandler = async () => {
+    setIsLoadingSigning(true);
     if (isSignupEnabled) {
       createUserWithEmailPassword(email, password)
         .then((data) => {
-          console.log("Data: ", data);
+          addUserInDatabase(data.user.email)
+            .then((user) => {
+              navigate("/home");
+            })
+            .catch((err) => {
+              setIsLoadingSigning(false);
+              handleErrorFromEmailLogin(err.code, err.message);
+            });
+          setIsLoadingSigning(false);
         })
         .catch((err) => {
           console.log("err ", err);
+          setIsLoadingSigning(false);
           handleErrorFromEmailLogin(err.code, err.message);
         });
     } else {
       signInWithEmailPassword(email, password)
-        .then((data) => console.log("Data: ", data.user))
+        .then((data) => {
+          setIsLoadingSigning(false);
+          navigate("/home");
+        })
         .catch((err) => {
-          console.log("Err: ", err.code);
+          if (err.code === "auth/user-not-found") {
+            setIsSignupEnabled(true);
+          }
+          setIsLoadingSigning(false);
           handleErrorFromEmailLogin(err.code, err.message);
         });
     }
@@ -79,6 +91,7 @@ const Login = () => {
     setIsGoogleLoading(true);
     signInWithGoogle()
       .then((data) => {
+        navigate("/home");
         console.log("Data: ", data);
       })
       .catch((err) => {
@@ -88,6 +101,8 @@ const Login = () => {
         setIsGoogleLoading(false);
       });
   };
+
+  console.log("heelo : ", isLoadingSigning);
 
   return (
     <div className="LoginPageContainer">
@@ -152,6 +167,7 @@ const Login = () => {
             <Button
               type="primary"
               className="width100"
+              loading={isLoadingSigning}
               onClick={onLoginClickHandler}
               disabled={
                 !email || !password || (isSignupEnabled && !confirmPassword)

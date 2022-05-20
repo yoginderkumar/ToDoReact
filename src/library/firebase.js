@@ -1,9 +1,16 @@
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import {
+  signOut,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
 } from "firebase/auth";
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  serverTimestamp,
+} from "firebase/firestore";
 
 export const firebaseConfig = {
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
@@ -26,5 +33,22 @@ export const createUserWithEmailPassword = (email, password) =>
   createUserWithEmailAndPassword(auth, email, password);
 export const signInWithEmailPassword = (email, password) =>
   signInWithEmailAndPassword(auth, email, password);
+
+export const signOutUser = () => auth.signOut();
+
+//DATABASE OPERATIONS
+const database = getFirestore(firebase.initializeApp(firebaseConfig));
+
+export const addUserInDatabase = async (email) => {
+  try {
+    const userRef = await addDoc(collection(database, "Users"), {
+      email,
+      createdAt: serverTimestamp(),
+    });
+    console.log("User added ", userRef);
+  } catch (err) {
+    console.log("Err: ", err);
+  }
+};
 
 export default firebase;

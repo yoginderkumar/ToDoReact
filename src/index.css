@@ -7,6 +7,26 @@
   color: #ff0038;
 }
 
+.whiteColor {
+  color: white;
+}
+
+.whiteBgColor {
+  background-color: white;
+}
+
+.greyBorderColor {
+  border-color: #b2bec3;
+}
+
+.primaryColor {
+  color: #1890ff;
+}
+
+.primaryBgColor {
+  background-color: #1890ff;
+}
+
 /* WIDTH AND HEIGHT */
 .width100 {
   width: 100%;

@@ -50,13 +50,20 @@ const Login = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [confirmPassword]);
 
+  const setUserInLocalStorage = (userInfo) => {
+    const {user: {uid, email, photoURL, displayName, accessToken}} = userInfo
+    const userData = {uid, email, photoURL, displayName, accessToken}
+    localStorage.setItem('user', JSON.stringify(userData))
+  }
+
   const onLoginClickHandler = async () => {
     setIsLoadingSigning(true);
     if (isSignupEnabled) {
       createUserWithEmailPassword(email, password)
         .then((data) => {
-          addUserInDatabase(data.user.email)
-            .then((user) => {
+          addUserInDatabase(data.user.uid, data.user.email)
+            .then((_) => {
+              setUserInLocalStorage(data)
               navigate("/home");
             })
             .catch((err) => {
@@ -73,6 +80,7 @@ const Login = () => {
     } else {
       signInWithEmailPassword(email, password)
         .then((data) => {
+          setUserInLocalStorage(data)
           setIsLoadingSigning(false);
           navigate("/home");
         })

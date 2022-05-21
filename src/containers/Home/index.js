@@ -1,15 +1,20 @@
 import React from "react";
 import { Layout } from "antd";
+import { useNavigate } from "react-router-dom";
 import { Profile } from "./components";
 import { signOutUser } from "../../library";
 import { handleErrorFromEmailLogin } from "../../utils/helperFunctions";
 
-const { Header, Footer, Sider, Content } = Layout;
+const { Header, Sider, Content } = Layout;
 
 const Home = () => {
+  const navigate = useNavigate()
   const onClickLogout = () => {
     signOutUser()
-      .then((data) => console.log("Data: ", data))
+      .then((data) => {
+        localStorage.removeItem('user')
+        navigate('/')
+      })
       .catch((err) => {
         handleErrorFromEmailLogin(err.code, err.message);
       });

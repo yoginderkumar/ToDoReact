@@ -9,6 +9,8 @@ import {
   getFirestore,
   collection,
   addDoc,
+  doc,
+  setDoc,
   serverTimestamp,
 } from "firebase/firestore";
 
@@ -39,13 +41,12 @@ export const signOutUser = () => auth.signOut();
 //DATABASE OPERATIONS
 const database = getFirestore(firebase.initializeApp(firebaseConfig));
 
-export const addUserInDatabase = async (email) => {
+export const addUserInDatabase = async (uid, email) => {
   try {
-    const userRef = await addDoc(collection(database, "Users"), {
+    return await setDoc(doc(database, "Users", uid), {
       email,
-      createdAt: serverTimestamp(),
+      createdAt: serverTimestamp()
     });
-    console.log("User added ", userRef);
   } catch (err) {
     console.log("Err: ", err);
   }

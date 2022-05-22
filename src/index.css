@@ -46,6 +46,14 @@
   margin-bottom: 12px;
 }
 
+.mr12 {
+  margin-right: 12px;
+}
+
+.mr24 {
+  margin-right: 24px;
+}
+
 /* flexbox */
 .flex {
   display: flex;
@@ -107,6 +115,14 @@
 
 .poppinsBold {
   font-family: 'PoppinsBold';
+}
+
+.f24 {
+  font-size: 24px;
+}
+
+.f28 {
+  font-size: 28px;
 }
 
 body { 

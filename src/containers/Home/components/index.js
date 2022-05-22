@@ -1,3 +1,5 @@
 import Profile from "./Profile";
+import TodoDashboard from "./TodoDashboard";
+import DashboardHeader from "./DashboardHeader";
 
-export { Profile };
+export { Profile, TodoDashboard, DashboardHeader };

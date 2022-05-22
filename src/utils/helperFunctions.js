@@ -17,3 +17,8 @@ export const handleErrorFromEmailLogin = (code, message) => {
       return showMessage("error", message);
   }
 };
+
+
+const testHelper = () => {
+  console.log('Hello world')
+}

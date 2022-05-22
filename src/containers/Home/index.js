@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Layout } from "antd";
 import { useNavigate } from "react-router-dom";
 import { Profile, TodoDashboard, DashboardHeader } from "./components";
@@ -13,7 +13,30 @@ const Home = () => {
   const user = JSON.parse(localStorage.getItem("user"));
 
   const [tasks, setTasks] = useState([]);
-  const [newTaskInput, setNewTaskInput] = useState("");
+  const [newTaskInput, setNewTaskInput] = useState('');
+  const [newTaskDisc, setNewTaskDisc] = useState('');
+  const [curTask, setCurTask] = useState({})
+  const [btnState, setBtnState] = useState(false)
+  const [taskStatus, setTaskStatus] = useState('')
+
+
+
+
+
+  const onEditUser = (task) => {
+    setCurTask(task)
+    setBtnState(true)
+    setNewTaskInput(curTask.TaskTitle)
+    setNewTaskDisc(curTask.TaskDisc)
+    console.log(btnState)
+  }
+  console.log(curTask)
+  const onDelUser = (task) => {
+
+    setCurTask(task)
+    setTasks(tasks.filter(Todo => Todo !== task))
+  }
+
 
   const onHandleChange = (name, value) => {
     switch (name) {
@@ -25,10 +48,48 @@ const Home = () => {
     }
   };
 
-  const onAddClickHandler = () => {
-    setTasks([newTaskInput, ...tasks]);
-    setNewTaskInput("");
+  const onHandleDiscChange = (name, value) => {
+    switch (name) {
+      case "newTaskDisc":
+        setNewTaskDisc(value);
+        break;
+      default:
+        return;
+    }
   };
+  const onAddClickHandler = () => {
+    if (!btnState) {
+      setTasks([{ TaskTitle: newTaskInput, TaskDisc: newTaskDisc }, ...tasks]);
+      setNewTaskInput("");
+      setNewTaskDisc("");
+    }
+    else {
+      setBtnState(false)
+      curTask.TaskTitle = newTaskInput;
+      curTask.TaskDisc = newTaskDisc;
+      setNewTaskInput("");
+      setNewTaskDisc("");
+      setTasks(tasks.filter(tasks => tasks = curTask))
+      return tasks
+
+    }
+
+  };
+
+
+  const getTaskStatus = (taskStats) => {
+    setTaskStatus(taskStats)
+
+    if (taskStatus == 'In Progress') {
+      console.log('Blue')
+    }
+
+    else {
+      console.log('green')
+
+    }
+
+  }
 
   const onClickLogout = () => {
     signOutUser()
@@ -41,7 +102,7 @@ const Home = () => {
       });
   };
 
-  console.log("Add: ", tasks);
+
 
   return (
     <Layout style={{ height: "100vh" }}>
@@ -60,8 +121,15 @@ const Home = () => {
           <TodoDashboard
             tasks={tasks}
             newTaskInput={newTaskInput}
+            newTaskDisc={newTaskDisc}
             onHandleChange={onHandleChange}
             onAddClickHandler={onAddClickHandler}
+            onHandleDiscChange={onHandleDiscChange}
+            ondelHandler={onDelUser}
+            onEditUser={onEditUser}
+            btnState={btnState}
+            getTaskStatus={getTaskStatus}
+
           />
         </Content>
       </Layout>

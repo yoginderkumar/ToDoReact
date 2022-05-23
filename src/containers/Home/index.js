@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { Layout } from "antd";
 import { useNavigate } from "react-router-dom";
 import { Profile, TodoDashboard, DashboardHeader } from "./components";
@@ -15,6 +15,8 @@ const Home = () => {
   const [tasks, setTasks] = useState([]);
   const [newTaskInput, setNewTaskInput] = useState("");
 
+  const inputRef = useRef(null);
+
   const onHandleChange = (name, value) => {
     switch (name) {
       case "newTask":
@@ -25,8 +27,19 @@ const Home = () => {
     }
   };
 
+  const onEnterPressedOnTaskInput = (e) => {
+    if (e.key === "Enter" && newTaskInput.length) {
+      onAddClickHandler();
+    }
+  };
+
   const onAddClickHandler = () => {
-    setTasks([newTaskInput, ...tasks]);
+    const taskData = {
+      id: tasks.length + 1,
+      title: newTaskInput,
+      status: "pending",
+    };
+    setTasks([taskData, ...tasks]);
     setNewTaskInput("");
   };
 
@@ -39,6 +52,36 @@ const Home = () => {
       .catch((err) => {
         handleErrorFromEmailLogin(err.code, err.message);
       });
+  };
+
+  const changeTaskToProgress = (id) => {
+    setTasks(
+      tasks.map((task) => {
+        if (task.id === id) {
+          return { ...task, status: "progress" };
+        }
+        return { ...task };
+      })
+    );
+  };
+
+  const changeTaskToDone = (id) => {
+    setTasks(
+      tasks.map((task) => {
+        if (task.id === id) {
+          return { ...task, status: "done" };
+        }
+        return { ...task };
+      })
+    );
+  };
+
+  const deleteATask = (id) => {
+    setTasks(tasks.filter((task) => task.id !== id));
+  };
+
+  const focusOnNewTaskInput = () => {
+    inputRef.current.focus();
   };
 
   console.log("Add: ", tasks);
@@ -59,9 +102,15 @@ const Home = () => {
         <Content className="whiteBgColor">
           <TodoDashboard
             tasks={tasks}
+            inputRef={inputRef}
             newTaskInput={newTaskInput}
+            deleteATask={deleteATask}
             onHandleChange={onHandleChange}
+            changeTaskToDone={changeTaskToDone}
             onAddClickHandler={onAddClickHandler}
+            focusOnNewTaskInput={focusOnNewTaskInput}
+            changeTaskToProgress={changeTaskToProgress}
+            onEnterPressedOnTaskInput={onEnterPressedOnTaskInput}
           />
         </Content>
       </Layout>
@@ -70,3 +119,11 @@ const Home = () => {
 };
 
 export default Home;
+
+/*
+{
+  id,
+  title,
+  status: pending | progress | done,
+}
+*/

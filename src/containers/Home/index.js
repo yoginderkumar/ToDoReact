@@ -14,6 +14,8 @@ const Home = () => {
 
   const [tasks, setTasks] = useState([]);
   const [newTaskInput, setNewTaskInput] = useState("");
+  const [selectedTask, setSelectedTask] = useState({});
+  const [isEditEnabled, setIsEditEnabled] = useState(false);
 
   const inputRef = useRef(null);
 
@@ -53,6 +55,27 @@ const Home = () => {
         handleErrorFromEmailLogin(err.code, err.message);
       });
   };
+
+  const onEditClickHandler = (task) => {
+    setSelectedTask(task)
+    setIsEditEnabled(true)
+    setNewTaskInput(task.title)
+    setTasks(tasks.filter(taskItem => taskItem.id !== task.id))
+  }
+
+  const onSaveChangesClickHandler = () => {
+    setTasks([{...selectedTask, title: newTaskInput}, ...tasks])
+    setIsEditEnabled(false)
+    setNewTaskInput("")
+    setSelectedTask({})
+  }
+
+  const onCancelSaveChanges = () => {
+    setTasks([{...selectedTask}, ...tasks])
+    setIsEditEnabled(false)
+    setNewTaskInput("")
+    setSelectedTask({})
+  }
 
   const changeTaskToProgress = (id) => {
     setTasks(
@@ -104,12 +127,16 @@ const Home = () => {
             tasks={tasks}
             inputRef={inputRef}
             newTaskInput={newTaskInput}
+            isEditEnabled={isEditEnabled}
             deleteATask={deleteATask}
             onHandleChange={onHandleChange}
             changeTaskToDone={changeTaskToDone}
             onAddClickHandler={onAddClickHandler}
+            onEditClickHandler={onEditClickHandler}
+            onCancelSaveChanges={onCancelSaveChanges}
             focusOnNewTaskInput={focusOnNewTaskInput}
             changeTaskToProgress={changeTaskToProgress}
+            onSaveChangesClickHandler={onSaveChangesClickHandler}
             onEnterPressedOnTaskInput={onEnterPressedOnTaskInput}
           />
         </Content>

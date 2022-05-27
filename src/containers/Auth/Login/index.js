@@ -7,6 +7,7 @@ import {
   signInWithEmailPassword,
   createUserWithEmailPassword,
   signInWithGoogle,
+  checkIfUserExist,
   addUserInDatabase,
 } from "../../../library";
 import { showMessage } from "../../../library/messages";
@@ -61,7 +62,7 @@ const Login = () => {
     if (isSignupEnabled) {
       createUserWithEmailPassword(email, password)
         .then((data) => {
-          addUserInDatabase(data.user.uid, data.user.email)
+          addUserInDatabase(data.user.uid, {email: data.user.email, auth_provider: "email"})
             .then((_) => {
               setUserInLocalStorage(data)
               navigate("/home");
@@ -94,13 +95,34 @@ const Login = () => {
     }
   };
 
-  const onLoginWithGoogleClickHandler = () => {
+  const onLoginWithGoogleClickHandler = async () => {
     console.log("Hello");
     setIsGoogleLoading(true);
     signInWithGoogle()
       .then((data) => {
-        navigate("/home");
-        console.log("Data: ", data);
+        checkIfUserExist(data.additionalUserInfo.profile.email).then(doesExist => {
+          if(doesExist) {
+            navigate("/home");
+          return
+        }  
+const userData = {
+          email: data.additionalUserInfo.profile.email,
+          name: data.additionalUserInfo.profile.name,
+          picture: data.additionalUserInfo.profile.picture,
+          auth_provider: 'google'
+        }
+console.log('Data: ', data.user.uid)
+        addUserInDatabase(data.user.uid, userData)
+              .then((_) => {
+              setUserInLocalStorage(userData)
+              navigate("/home");
+            })
+            .catch((err) => {
+              setIsGoogleLoading(false);
+              handleErrorFromEmailLogin(err.code, err.message);
+            });
+        })
+        
       })
       .catch((err) => {
         showMessage("error", err.message);

@@ -18,7 +18,6 @@ const Profile = ({ user, onClickLogout }) => {
           type="primary"
           className="mt12"
           text={"Edit Profile"}
-          onClick={onClickLogout}
           iconAfter={<EditOutlined />}
         />
         <ButtonT

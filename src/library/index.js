@@ -3,6 +3,7 @@ import {
   firebaseConfig,
   signInWithGoogle,
   addUserInDatabase,
+  checkIfUserExist,
   signInWithEmailPassword,
   createUserWithEmailPassword,
 } from "./firebase";
@@ -10,6 +11,7 @@ import {
 export {
   signOutUser,
   firebaseConfig,
+  checkIfUserExist,
   signInWithGoogle,
   addUserInDatabase,
   signInWithEmailPassword,

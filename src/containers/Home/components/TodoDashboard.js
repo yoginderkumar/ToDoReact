@@ -1,4 +1,4 @@
-import { PlusOutlined } from "@ant-design/icons";
+import { PlusOutlined, CheckOutlined } from "@ant-design/icons";
 import { Empty, Input } from "antd";
 import React from "react";
 import TaskCard from "./TaskCard";
@@ -8,13 +8,17 @@ const TodoDashboard = ({
   tasks,
   inputRef,
   newTaskInput,
+  isEditEnabled,
   deleteATask,
   onHandleChange,
   changeTaskToDone,
   onAddClickHandler,
+  onEditClickHandler,
   focusOnNewTaskInput,
+  onCancelSaveChanges,
   changeTaskToProgress,
   onEnterPressedOnTaskInput,
+  onSaveChangesClickHandler,
 }) => {
   return (
     <div className="todoDashboardContainer">
@@ -29,11 +33,17 @@ const TodoDashboard = ({
         />
         <ButtonT
           type="primary"
-          text="Add"
+          text={isEditEnabled ? "Save changes" : "Add"}
           disabled={!newTaskInput}
-          iconAfter={<PlusOutlined />}
-          onClick={onAddClickHandler}
+          iconAfter={isEditEnabled ? <CheckOutlined /> : <PlusOutlined />}
+          onClick={isEditEnabled ? onSaveChangesClickHandler : onAddClickHandler}
         />
+        {isEditEnabled && <ButtonT
+          text={"Cancel"}
+          disabled={!newTaskInput}
+          onClick={onCancelSaveChanges}
+          style={{marginLeft: 16}}
+        />}
       </div>
       <div>
         {tasks.length ? (
@@ -43,6 +53,7 @@ const TodoDashboard = ({
               task={task}
               deleteATask={deleteATask}
               changeTaskToDone={changeTaskToDone}
+              onEditClickHandler={onEditClickHandler}
               changeTaskToProgress={changeTaskToProgress}
             />
           ))

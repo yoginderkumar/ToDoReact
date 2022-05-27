@@ -10,3 +10,7 @@ const CardT = ({ style, className, children, ...props }) => {
 };
 
 export default CardT;
+
+
+
+

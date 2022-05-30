@@ -36,14 +36,18 @@ const TodoDashboard = ({
           text={isEditEnabled ? "Save changes" : "Add"}
           disabled={!newTaskInput}
           iconAfter={isEditEnabled ? <CheckOutlined /> : <PlusOutlined />}
-          onClick={isEditEnabled ? onSaveChangesClickHandler : onAddClickHandler}
+          onClick={
+            isEditEnabled ? onSaveChangesClickHandler : onAddClickHandler
+          }
         />
-        {isEditEnabled && <ButtonT
-          text={"Cancel"}
-          disabled={!newTaskInput}
-          onClick={onCancelSaveChanges}
-          style={{marginLeft: 16}}
-        />}
+        {isEditEnabled && (
+          <ButtonT
+            text={"Cancel"}
+            disabled={!newTaskInput}
+            onClick={onCancelSaveChanges}
+            style={{ marginLeft: 16 }}
+          />
+        )}
       </div>
       <div>
         {tasks.length ? (

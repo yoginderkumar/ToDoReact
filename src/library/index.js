@@ -6,6 +6,9 @@ import {
   checkIfUserExist,
   signInWithEmailPassword,
   createUserWithEmailPassword,
+  addTaskInDatabase,
+  updateTaskTitleInDatabase,
+  updateTaskStatusInDatabase,
 } from "./firebase";
 
 export {
@@ -14,6 +17,9 @@ export {
   checkIfUserExist,
   signInWithGoogle,
   addUserInDatabase,
+  addTaskInDatabase,
   signInWithEmailPassword,
+  updateTaskTitleInDatabase,
+  updateTaskStatusInDatabase,
   createUserWithEmailPassword,
 };

@@ -15,7 +15,6 @@ const TaskCard = ({
   onEditClickHandler,
   changeTaskToProgress,
 }) => {
-  console.log("Task: ", task);
   return (
     <CardT
       hoverable
@@ -56,9 +55,14 @@ const TaskCard = ({
             </Tooltip>
           ) : null}
 
-          {task.status === "done" ? null : <Tooltip placement="top" title={"To edit your task."}>
-            <EditOutlined onClick={() => onEditClickHandler(task)} className="f18 mh12" />
-          </Tooltip>}
+          {task.status === "done" ? null : (
+            <Tooltip placement="top" title={"To edit your task."}>
+              <EditOutlined
+                onClick={() => onEditClickHandler(task)}
+                className="f18 mh12"
+              />
+            </Tooltip>
+          )}
           <Tooltip placement="top" title={"To delete your task!"}>
             <DeleteOutlined
               className="f18 errorColor"

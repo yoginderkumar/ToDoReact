@@ -17,3 +17,7 @@ export const handleErrorFromEmailLogin = (code, message) => {
       return showMessage("error", message);
   }
 };
+
+export const toUpperCaseStringInitial = (string) => {
+  return string[0].toUpperCase();
+};

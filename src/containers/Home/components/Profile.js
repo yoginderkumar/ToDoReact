@@ -1,6 +1,7 @@
 import { EditOutlined, LogoutOutlined } from "@ant-design/icons";
 import React from "react";
 import { ButtonT, UserAvatar } from "../../../components/simpleUI";
+import { toUpperCaseStringInitial } from "../../../utils/helperFunctions";
 
 const Profile = ({ user, onClickLogout }) => {
   return (
@@ -8,9 +9,13 @@ const Profile = ({ user, onClickLogout }) => {
       style={{ height: "100%" }}
       className="flex flexColumn alignItemsCenter justifyContentCenter"
     >
-      <UserAvatar size={100} />
+      <UserAvatar
+        size={100}
+        image={user.picture || ""}
+        name={toUpperCaseStringInitial(user.name) || "U"}
+      />
       <div className="flex flexColumn alignItemsCenter justifyContentCenter mt12">
-        <h4>{user.displayName || "TODO User"}</h4>
+        <h4>{user.name || "TODO User"}</h4>
         <h4>{user.email}</h4>
       </div>
       <div className="flex flexColumn">

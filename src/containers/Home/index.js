@@ -5,6 +5,11 @@ import { Profile, TodoDashboard, DashboardHeader } from "./components";
 import { signOutUser } from "../../library";
 import { handleErrorFromEmailLogin } from "../../utils/helperFunctions";
 import "./components/style.css";
+import {
+  addTaskInDatabase,
+  updateTaskTitleInDatabase,
+  updateTaskStatusInDatabase,
+} from "../../library";
 
 const { Header, Sider, Content } = Layout;
 
@@ -41,6 +46,7 @@ const Home = () => {
       title: newTaskInput,
       status: "pending",
     };
+    addTaskInDatabase(user.uid, taskData);
     setTasks([taskData, ...tasks]);
     setNewTaskInput("");
   };
@@ -57,27 +63,29 @@ const Home = () => {
   };
 
   const onEditClickHandler = (task) => {
-    setSelectedTask(task)
-    setIsEditEnabled(true)
-    setNewTaskInput(task.title)
-    setTasks(tasks.filter(taskItem => taskItem.id !== task.id))
-  }
+    setSelectedTask(task);
+    setIsEditEnabled(true);
+    setNewTaskInput(task.title);
+    setTasks(tasks.filter((taskItem) => taskItem.id !== task.id));
+  };
 
   const onSaveChangesClickHandler = () => {
-    setTasks([{...selectedTask, title: newTaskInput}, ...tasks])
-    setIsEditEnabled(false)
-    setNewTaskInput("")
-    setSelectedTask({})
-  }
+    updateTaskTitleInDatabase(user.uid, selectedTask.id, newTaskInput);
+    setTasks([{ ...selectedTask, title: newTaskInput }, ...tasks]);
+    setIsEditEnabled(false);
+    setNewTaskInput("");
+    setSelectedTask({});
+  };
 
   const onCancelSaveChanges = () => {
-    setTasks([{...selectedTask}, ...tasks])
-    setIsEditEnabled(false)
-    setNewTaskInput("")
-    setSelectedTask({})
-  }
+    setTasks([{ ...selectedTask }, ...tasks]);
+    setIsEditEnabled(false);
+    setNewTaskInput("");
+    setSelectedTask({});
+  };
 
   const changeTaskToProgress = (id) => {
+    updateTaskStatusInDatabase(user.uid, id, "progress");
     setTasks(
       tasks.map((task) => {
         if (task.id === id) {
@@ -89,6 +97,7 @@ const Home = () => {
   };
 
   const changeTaskToDone = (id) => {
+    updateTaskStatusInDatabase(user.uid, id, "done");
     setTasks(
       tasks.map((task) => {
         if (task.id === id) {
@@ -106,8 +115,6 @@ const Home = () => {
   const focusOnNewTaskInput = () => {
     inputRef.current.focus();
   };
-
-  console.log("Add: ", tasks);
 
   return (
     <Layout style={{ height: "100vh" }}>

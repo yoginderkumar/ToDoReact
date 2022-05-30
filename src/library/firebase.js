@@ -1,20 +1,16 @@
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import {
-  signOut,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
 } from "firebase/auth";
 import {
   getFirestore,
-  collection,
-  addDoc,
   doc,
   setDoc,
-  query,
-  where,
-  getDocs,
   serverTimestamp,
+  getDoc,
+  updateDoc,
 } from "firebase/firestore";
 
 export const firebaseConfig = {
@@ -44,22 +40,52 @@ export const signOutUser = () => auth.signOut();
 //DATABASE OPERATIONS
 const database = getFirestore(firebase.initializeApp(firebaseConfig));
 
-
-export const checkIfUserExist = async (email) => {
-  const q = query(collection(database, "Users"), where("email", "==", email));
-  const querySnapshot = await getDocs(q);
- if(querySnapshot.size) {
-   return true
- }
- return false
-}
+export const checkIfUserExist = async (uid) => {
+  const docRef = doc(database, "Users", uid);
+  const docSnap = await getDoc(docRef);
+  if (docSnap.exists()) {
+    return true;
+  } else {
+    return false;
+  }
+};
 
 export const addUserInDatabase = async (uid, data) => {
-  console.log("UID: ", uid)
   try {
     return await setDoc(doc(database, "Users", uid), {
       ...data,
-      createdAt: serverTimestamp()
+      createdAt: serverTimestamp(),
+    });
+  } catch (err) {
+    console.log("Err: ", err);
+  }
+};
+
+export const addTaskInDatabase = async (uid, task) => {
+  try {
+    return await setDoc(doc(database, `Users/${uid}/tasks`, `${task.id}`), {
+      ...task,
+      createdAt: serverTimestamp(),
+    });
+  } catch (err) {
+    console.log("Err: ", err);
+  }
+};
+
+export const updateTaskTitleInDatabase = async (uid, taskId, title) => {
+  try {
+    return await updateDoc(doc(database, `Users/${uid}/tasks`, `${taskId}`), {
+      title,
+    });
+  } catch (err) {
+    console.log("Err: ", err);
+  }
+};
+
+export const updateTaskStatusInDatabase = async (uid, taskId, status) => {
+  try {
+    return await updateDoc(doc(database, `Users/${uid}/tasks`, `${taskId}`), {
+      status,
     });
   } catch (err) {
     console.log("Err: ", err);

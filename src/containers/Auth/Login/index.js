@@ -52,19 +52,24 @@ const Login = () => {
   }, [confirmPassword]);
 
   const setUserInLocalStorage = (userInfo) => {
-    const {user: {uid, email, photoURL, displayName, accessToken}} = userInfo
-    const userData = {uid, email, photoURL, displayName, accessToken}
-    localStorage.setItem('user', JSON.stringify(userData))
-  }
+    const {
+      user: { uid, email, picture, name, accessToken },
+    } = userInfo;
+    const userData = { uid, email, name, picture, accessToken };
+    localStorage.setItem("user", JSON.stringify(userData));
+  };
 
   const onLoginClickHandler = async () => {
     setIsLoadingSigning(true);
     if (isSignupEnabled) {
       createUserWithEmailPassword(email, password)
         .then((data) => {
-          addUserInDatabase(data.user.uid, {email: data.user.email, auth_provider: "email"})
+          addUserInDatabase(data.user.uid, {
+            email: data.user.email,
+            auth_provider: "email",
+          })
             .then((_) => {
-              setUserInLocalStorage(data)
+              setUserInLocalStorage(data);
               navigate("/home");
             })
             .catch((err) => {
@@ -74,14 +79,13 @@ const Login = () => {
           setIsLoadingSigning(false);
         })
         .catch((err) => {
-          console.log("err ", err);
           setIsLoadingSigning(false);
           handleErrorFromEmailLogin(err.code, err.message);
         });
     } else {
       signInWithEmailPassword(email, password)
         .then((data) => {
-          setUserInLocalStorage(data)
+          setUserInLocalStorage(data);
           setIsLoadingSigning(false);
           navigate("/home");
         })
@@ -96,33 +100,26 @@ const Login = () => {
   };
 
   const onLoginWithGoogleClickHandler = async () => {
-    console.log("Hello");
     setIsGoogleLoading(true);
     signInWithGoogle()
-      .then((data) => {
-        checkIfUserExist(data.additionalUserInfo.profile.email).then(doesExist => {
-          if(doesExist) {
-            navigate("/home");
-          return
-        }  
-const userData = {
-          email: data.additionalUserInfo.profile.email,
-          name: data.additionalUserInfo.profile.name,
-          picture: data.additionalUserInfo.profile.picture,
-          auth_provider: 'google'
+      .then(async (data) => {
+        const doesExist = await checkIfUserExist(data.user.uid);
+        const userData = {
+          user: {
+            uid: data.user.uid,
+            email: data.additionalUserInfo.profile.email,
+            name: data.additionalUserInfo.profile.name,
+            picture: data.additionalUserInfo.profile.picture,
+            auth_provider: "google",
+            accessToken: data.credential.accessToken,
+          },
+        };
+        setUserInLocalStorage(userData);
+        if (!doesExist) {
+          await addUserInDatabase(data.user.uid, { ...userData.user });
+          return navigate("/home");
         }
-console.log('Data: ', data.user.uid)
-        addUserInDatabase(data.user.uid, userData)
-              .then((_) => {
-              setUserInLocalStorage(userData)
-              navigate("/home");
-            })
-            .catch((err) => {
-              setIsGoogleLoading(false);
-              handleErrorFromEmailLogin(err.code, err.message);
-            });
-        })
-        
+        return navigate("/home");
       })
       .catch((err) => {
         showMessage("error", err.message);
@@ -131,8 +128,6 @@ console.log('Data: ', data.user.uid)
         setIsGoogleLoading(false);
       });
   };
-
-  console.log("heelo : ", isLoadingSigning);
 
   return (
     <div className="LoginPageContainer">

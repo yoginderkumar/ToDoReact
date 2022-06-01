@@ -2,13 +2,14 @@ import { PlusOutlined, CheckOutlined } from "@ant-design/icons";
 import { Empty, Input } from "antd";
 import React from "react";
 import TaskCard from "./TaskCard";
-import { ButtonT } from "../../../components/simpleUI";
+import { ButtonT, Loader } from "../../../components/simpleUI";
 
 const TodoDashboard = ({
   tasks,
   inputRef,
   newTaskInput,
   isEditEnabled,
+  isLoadingTasks,
   deleteATask,
   onHandleChange,
   changeTaskToDone,
@@ -50,7 +51,14 @@ const TodoDashboard = ({
         )}
       </div>
       <div>
-        {tasks.length ? (
+        {isLoadingTasks ? (
+          <div
+            style={{ marginTop: "30%" }}
+            className="flex alignItemsCenter justifyContentCenter"
+          >
+            <Loader />
+          </div>
+        ) : tasks.length ? (
           tasks.map((task, index) => (
             <TaskCard
               key={index}

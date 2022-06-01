@@ -11,6 +11,9 @@ import {
   serverTimestamp,
   getDoc,
   updateDoc,
+  getDocs,
+  collection,
+  deleteDoc,
 } from "firebase/firestore";
 
 export const firebaseConfig = {
@@ -90,6 +93,24 @@ export const updateTaskStatusInDatabase = async (uid, taskId, status) => {
   } catch (err) {
     console.log("Err: ", err);
   }
+};
+
+export const getUserTasksFromFirebase = async (uid) => {
+  try {
+    let userTasks = [];
+    await (
+      await getDocs(collection(database, `Users/${uid}/tasks`))
+    ).forEach((doc) => {
+      userTasks.push({ ...doc.data() });
+    });
+    return userTasks.reverse();
+  } catch (err) {
+    console.log("Err: ", err);
+  }
+};
+
+export const deleteATaskInFirebase = async (uid, taskId) => {
+  await deleteDoc(doc(database, `Users/${uid}/tasks`, `${taskId}`));
 };
 
 export default firebase;

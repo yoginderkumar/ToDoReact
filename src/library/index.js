@@ -7,6 +7,8 @@ import {
   signInWithEmailPassword,
   createUserWithEmailPassword,
   addTaskInDatabase,
+  deleteATaskInFirebase,
+  getUserTasksFromFirebase,
   updateTaskTitleInDatabase,
   updateTaskStatusInDatabase,
 } from "./firebase";
@@ -18,7 +20,9 @@ export {
   signInWithGoogle,
   addUserInDatabase,
   addTaskInDatabase,
+  deleteATaskInFirebase,
   signInWithEmailPassword,
+  getUserTasksFromFirebase,
   updateTaskTitleInDatabase,
   updateTaskStatusInDatabase,
   createUserWithEmailPassword,

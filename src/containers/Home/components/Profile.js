@@ -12,7 +12,7 @@ const Profile = ({ user, onClickLogout }) => {
       <UserAvatar
         size={100}
         image={user.picture || ""}
-        name={toUpperCaseStringInitial(user.name) || "U"}
+        name={user.name ? toUpperCaseStringInitial(user.name) : "U"}
       />
       <div className="flex flexColumn alignItemsCenter justifyContentCenter mt12">
         <h4>{user.name || "TODO User"}</h4>

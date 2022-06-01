@@ -1,8 +1,12 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Layout } from "antd";
 import { useNavigate } from "react-router-dom";
 import { Profile, TodoDashboard, DashboardHeader } from "./components";
-import { signOutUser } from "../../library";
+import {
+  deleteATaskInFirebase,
+  getUserTasksFromFirebase,
+  signOutUser,
+} from "../../library";
 import { handleErrorFromEmailLogin } from "../../utils/helperFunctions";
 import "./components/style.css";
 import {
@@ -21,8 +25,21 @@ const Home = () => {
   const [newTaskInput, setNewTaskInput] = useState("");
   const [selectedTask, setSelectedTask] = useState({});
   const [isEditEnabled, setIsEditEnabled] = useState(false);
+  const [isLoadingTasks, setIsLoadingTasks] = useState(true);
 
   const inputRef = useRef(null);
+
+  const getUserTasks = React.useCallback(async () => {
+    const results = await getUserTasksFromFirebase(user.uid);
+    if (results.length) {
+      setTasks([...results]);
+    }
+    setIsLoadingTasks(false);
+  }, [user.uid]);
+
+  useEffect(() => {
+    getUserTasks();
+  }, [getUserTasks]);
 
   const onHandleChange = (name, value) => {
     switch (name) {
@@ -108,7 +125,8 @@ const Home = () => {
     );
   };
 
-  const deleteATask = (id) => {
+  const deleteATask = async (id) => {
+    await deleteATaskInFirebase(user.uid, id);
     setTasks(tasks.filter((task) => task.id !== id));
   };
 
@@ -135,6 +153,7 @@ const Home = () => {
             inputRef={inputRef}
             newTaskInput={newTaskInput}
             isEditEnabled={isEditEnabled}
+            isLoadingTasks={isLoadingTasks}
             deleteATask={deleteATask}
             onHandleChange={onHandleChange}
             changeTaskToDone={changeTaskToDone}
